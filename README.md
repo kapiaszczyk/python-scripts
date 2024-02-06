@@ -35,7 +35,7 @@ python parse_notes_to_anki_csv.py -i <input_file> -o [output_file]
 
 Where `<input_file>` is the path to the markdown file containing the notes and `<output_file>` is the path to the directory where the CSV file will be saved. If no output file is specified, the CSV file will be saved in the same directory as the input file. 
 
-The script converts the markdown to HTML elements, so the notes can contain HTML tags (e.g. `<br>` for line breaks or `<code>`).
+The script converts the markdown to HTML elements, so the notes can contain HTML tags (e.g. `<br>` for line breaks or `<code>`). It does not support anything more fancy, like images.
 
 <!-- LICENSE -->
 ## License

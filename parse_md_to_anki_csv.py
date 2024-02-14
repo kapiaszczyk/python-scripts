@@ -37,12 +37,12 @@ def save_file(file_path, content, output_file_path=None):
         else:
             file_name = Path(file_path).stem
             print(file_name)
-            output_file_path = Path(output_file_path).parent / (file_name + "_deck.csv")
+            output_file_path = Path(output_file_path) / (file_name + "_deck.csv")
         with open(output_file_path, "w", newline="", encoding="utf-8") as csv_file:
             csv_writer = csv.writer(csv_file)
             csv_writer.writerows(content)
 
-        print(f"File created at {(output_file_path).parent} directory")
+        print(f"File created: {(output_file_path)}")
 
     except Exception as e:
         print(f"An error occurred while saving the file: {e}")

@@ -97,10 +97,10 @@ if __name__ == "__main__":
         "--output", "-o", nargs="?", help="path to the output directory", action="store"
     )
     args = parser.parse_args()
-    if args.input:
+    if args.input and not args.output:
         print("Path to the file: " + args.input)
         parse_markdown_file(args.input)
-    if args.input and args.output:
+    elif args.input and args.output:
         print(f"Reading from {args.input}")
         print(f"Saving at {args.output}")
         parse_markdown_file(args.input, args.output)

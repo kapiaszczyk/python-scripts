@@ -3,6 +3,7 @@ import csv
 import markdown
 import argparse
 import re
+import logging
 from pathlib import Path
 
 
@@ -11,12 +12,9 @@ def read_markdown_file(file_path):
         with open(file_path, "r", encoding="utf-8") as file:
             content = file.read()
             return content
-    except FileNotFoundError:
-        print(f"File not found at {file_path}")
-        return None
     except Exception as e:
-        print(f"An error occurred while reading the file: {e}")
-        return None
+        logger.error(f"An error occurred while reading the file: {e}")
+        raise e
 
 
 def convert_markdown_to_html(markdown_text):
@@ -24,7 +22,7 @@ def convert_markdown_to_html(markdown_text):
         html_content = markdown.markdown(markdown_text, extensions=['fenced_code'])
         return html_content
     except Exception as e:
-        print(f"An error occurred while converting Markdown to HTML: {e}")
+        logger.error(f"An error occurred while converting Markdown to HTML: {e}")
         return None
 
 
@@ -40,9 +38,10 @@ def save_file(file_path, content, output_file_path=None):
         with open(output_file_path, "w", newline="", encoding="utf-8") as csv_file:
             csv_writer = csv.writer(csv_file)
             csv_writer.writerows(content)
-            print(f"File saved at {output_file_path}")
+            logger.info(f"File saved at {output_file_path}")
 
     except Exception as e:
+        logger.error(f"An error occurred while saving the file: {e}")
         return None
 
 
@@ -51,10 +50,11 @@ def parse_markdown_file(file_path, output_file_path=None):
     # Interpret the heading as question and the rest as the answer
     # Skip '#' headings
     try:
-        markdown_file = read_markdown_file(file_path)
-        if markdown_file is None:
-            raise Exception("File is empty")
-
+        try:
+            markdown_file = read_markdown_file(file_path)
+        except Exception as e:
+            return None
+           
         deck = []
         question = None
         answer = []
@@ -79,6 +79,7 @@ def parse_markdown_file(file_path, output_file_path=None):
         save_file(file_path, deck, output_file_path)
 
     except Exception as e:
+        logger.error(f"An error occurred while parsing the file: {e}")
         return None
 
 
@@ -92,7 +93,22 @@ if __name__ == "__main__":
     parser.add_argument(
         "--output", "-o", nargs="?", help="path to the output directory", action="store"
     )
+    parser.add_argument(
+        "--log", "-l", help="enable console logging", action='store_true'
+    )
+    parser.add_argument(
+        "--log_level", "-lv", help="logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL)", default="INFO"
+    )
     args = parser.parse_args()
+    
+    log_format = "%(levelname)s - %(message)s"
+    logging.basicConfig(level=logging.CRITICAL, format=log_format)
+    logger = logging.getLogger(__name__)
+    
+    if args.log and args.log in ["True", "true", "1"]:
+        logger.addHandler(logging.StreamHandler(sys.stdout))
+    if args.log_level and args.log_level in ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"] and args.log:
+        logger.setLevel(args.log_level)
     if args.input and not args.output:
         parse_markdown_file(args.input)
     elif args.input and args.output:

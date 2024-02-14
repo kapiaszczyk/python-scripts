@@ -36,22 +36,20 @@ def save_file(file_path, content, output_file_path=None):
             output_file_path = file_path.replace(".md", "_deck.csv")
         else:
             file_name = Path(file_path).stem
-            print(file_name)
             output_file_path = Path(output_file_path) / (file_name + "_deck.csv")
         with open(output_file_path, "w", newline="", encoding="utf-8") as csv_file:
             csv_writer = csv.writer(csv_file)
             csv_writer.writerows(content)
-
-        print(f"File created: {(output_file_path)}")
+            print(f"File saved at {output_file_path}")
 
     except Exception as e:
-        print(f"An error occurred while saving the file: {e}")
         return None
 
 
 def parse_markdown_file(file_path, output_file_path=None):
 
     # Interpret the heading as question and the rest as the answer
+    # Skip '#' headings
     try:
         markdown_file = read_markdown_file(file_path)
         if markdown_file is None:
@@ -78,11 +76,9 @@ def parse_markdown_file(file_path, output_file_path=None):
             html_answer =  re.sub(r'<\/?p>', '', convert_markdown_to_html("\n".join(answer).strip()))
             deck.append([question.strip(), html_answer])
 
-        # Write to the CSV file
         save_file(file_path, deck, output_file_path)
 
     except Exception as e:
-        print(f"An error occurred while parsing the file: {e}")
         return None
 
 
@@ -98,9 +94,6 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
     if args.input and not args.output:
-        print("Path to the file: " + args.input)
         parse_markdown_file(args.input)
     elif args.input and args.output:
-        print(f"Reading from {args.input}")
-        print(f"Saving at {args.output}")
         parse_markdown_file(args.input, args.output)

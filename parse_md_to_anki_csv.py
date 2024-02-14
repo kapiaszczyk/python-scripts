@@ -2,6 +2,7 @@ import sys
 import csv
 import markdown
 import argparse
+import re
 from pathlib import Path
 
 
@@ -20,7 +21,7 @@ def read_markdown_file(file_path):
 
 def convert_markdown_to_html(markdown_text):
     try:
-        html_content = markdown.markdown(markdown_text)
+        html_content = markdown.markdown(markdown_text, extensions=['fenced_code'])
         return html_content
     except Exception as e:
         print(f"An error occurred while converting Markdown to HTML: {e}")
@@ -61,17 +62,20 @@ def parse_markdown_file(file_path, output_file_path=None):
         answer = []
 
         for line in markdown_file.splitlines():
+            if line.startswith("# "):
+                continue
             if line.startswith("###"):
                 if question is not None:
                     html_answer = convert_markdown_to_html("\n".join(answer).strip())
+                    html_answer = re.sub(r'<\/?p>', '', html_answer)
                     deck.append([question.strip(), html_answer])
                     answer = []
-                question = line[3:].strip()
+                question =  re.sub(r'<\/?p>', '', convert_markdown_to_html(line[3:].strip()))
             else:
                 answer.append(line)
 
         if question is not None:
-            html_answer = convert_markdown_to_html("\n".join(answer).strip())
+            html_answer =  re.sub(r'<\/?p>', '', convert_markdown_to_html("\n".join(answer).strip()))
             deck.append([question.strip(), html_answer])
 
         # Write to the CSV file

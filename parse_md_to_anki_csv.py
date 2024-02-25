@@ -30,13 +30,13 @@ def convert_markdown_to_html(markdown_text):
 def save_file(file_path, content, output_file_path=None, remove_p_tags=None):
     # If path to the output directory is passed, save the file there
     # Otherwise save to the directory of the input file
-    
+
     print(remove_p_tags)
 
     if remove_p_tags:
         print("Removing p tags")
         content = re.sub(r'<\/?p>', '', content)
-    
+
     try:
         if output_file_path is None:
             output_file_path = file_path.replace(".md", "_deck.csv")
@@ -54,7 +54,7 @@ def save_file(file_path, content, output_file_path=None, remove_p_tags=None):
 
 
 def parse_markdown_file(file_path, output_file_path=None, remove_p_tags=None):
-    
+
     print("Parse markdown file: " + remove_p_tags.__str__())
 
     try:
@@ -112,7 +112,8 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
 
-    logging.basicConfig(level=logging.CRITICAL, format=("%(levelname)s - %(message)s"))
+    logging.basicConfig(level=logging.CRITICAL,
+                        format=("%(levelname)s - %(message)s"))
     logger = logging.getLogger(__name__)
 
     if args.log and args.log in ["True", "true", "1"]:

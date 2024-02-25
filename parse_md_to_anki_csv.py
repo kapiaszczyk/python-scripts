@@ -14,27 +14,35 @@ def read_markdown_file(file_path):
             return content
     except Exception as e:
         logger.error(f"An error occurred while reading the file: {e}")
-        raise e
 
 
 def convert_markdown_to_html(markdown_text):
     try:
-        html_content = markdown.markdown(markdown_text, extensions=['fenced_code'])
+        html_content = markdown.markdown(
+            markdown_text, extensions=['fenced_code'])
         return html_content
     except Exception as e:
-        logger.error(f"An error occurred while converting Markdown to HTML: {e}")
+        logger.error(
+            f"An error occurred while converting Markdown to HTML: {e}")
         return None
 
 
-def save_file(file_path, content, output_file_path=None):
+def save_file(file_path, content, output_file_path=None, remove_p_tags=None):
     # If path to the output directory is passed, save the file there
     # Otherwise save to the directory of the input file
+    
+    print(remove_p_tags)
+
+    if remove_p_tags:
+        print("Removing p tags")
+        content = re.sub(r'<\/?p>', '', content)
+    
     try:
         if output_file_path is None:
             output_file_path = file_path.replace(".md", "_deck.csv")
         else:
-            file_name = Path(file_path).stem
-            output_file_path = Path(output_file_path) / (file_name + "_deck.csv")
+            output_file_path = Path(output_file_path) / \
+                (Path(file_path).stem + "_deck.csv")
         with open(output_file_path, "w", newline="", encoding="utf-8") as csv_file:
             csv_writer = csv.writer(csv_file)
             csv_writer.writerows(content)
@@ -45,16 +53,16 @@ def save_file(file_path, content, output_file_path=None):
         return None
 
 
-def parse_markdown_file(file_path, output_file_path=None):
+def parse_markdown_file(file_path, output_file_path=None, remove_p_tags=None):
+    
+    print("Parse markdown file: " + remove_p_tags.__str__())
 
-    # Interpret the heading as question and the rest as the answer
-    # Skip '#' headings
     try:
         try:
             markdown_file = read_markdown_file(file_path)
         except Exception as e:
             return None
-           
+
         deck = []
         question = None
         answer = []
@@ -64,19 +72,19 @@ def parse_markdown_file(file_path, output_file_path=None):
                 continue
             if line.startswith("###"):
                 if question is not None:
-                    html_answer = convert_markdown_to_html("\n".join(answer).strip())
-                    html_answer = re.sub(r'<\/?p>', '', html_answer)
+                    html_answer = convert_markdown_to_html(
+                        "\n".join(answer).strip())
                     deck.append([question.strip(), html_answer])
                     answer = []
-                question =  re.sub(r'<\/?p>', '', convert_markdown_to_html(line[3:].strip()))
+                question = convert_markdown_to_html(line[3:].strip())
             else:
                 answer.append(line)
 
         if question is not None:
-            html_answer =  re.sub(r'<\/?p>', '', convert_markdown_to_html("\n".join(answer).strip()))
+            html_answer = convert_markdown_to_html("\n".join(answer).strip())
             deck.append([question.strip(), html_answer])
 
-        save_file(file_path, deck, output_file_path)
+        save_file(file_path, deck, output_file_path, remove_p_tags)
 
     except Exception as e:
         logger.error(f"An error occurred while parsing the file: {e}")
@@ -97,19 +105,25 @@ if __name__ == "__main__":
         "--log", "-l", help="enable console logging", action='store_true'
     )
     parser.add_argument(
-        "--log_level", "-lv", help="logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL)", default="INFO"
+        "--log_level", "-lv", help="logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL)", default="CRITICAL"
+    )
+    parser.add_argument(
+        "--remove_p_tags", "-r", help="remove <p> tags from the output", action="store_false"
     )
     args = parser.parse_args()
-    
-    log_format = "%(levelname)s - %(message)s"
-    logging.basicConfig(level=logging.CRITICAL, format=log_format)
+
+    logging.basicConfig(level=logging.CRITICAL, format=("%(levelname)s - %(message)s"))
     logger = logging.getLogger(__name__)
-    
+
     if args.log and args.log in ["True", "true", "1"]:
         logger.addHandler(logging.StreamHandler(sys.stdout))
     if args.log_level and args.log_level in ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"] and args.log:
         logger.setLevel(args.log_level)
-    if args.input and not args.output:
+    if args.input and not args.output and not args.remove_p_tags:
         parse_markdown_file(args.input)
-    elif args.input and args.output:
-        parse_markdown_file(args.input, args.output)
+    elif args.input and args.output and args.remove_p_tags is True:
+        print("No remove p tags")
+        parse_markdown_file(args.input, args.output, True)
+    elif args.input and args.output and args.remove_p_tags in [False, "False", "false", "0"] or args.remove_p_tags is None:
+        print("Remove p tags")
+        parse_markdown_file(args.input, args.output, False)

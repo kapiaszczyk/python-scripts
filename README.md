@@ -17,14 +17,14 @@ This script parses markdown notes to a CSV file that can be imported into Anki. 
 Answer
 
 ### Question
-Other answer.
+Another answer
 ```
 
 The script will parse the notes and create a CSV file with the following format:
 
 ```csv
 Question,Answer
-Question,Other answer.
+Question,Another answer.
 ```
 
 To use the script, run the following command:

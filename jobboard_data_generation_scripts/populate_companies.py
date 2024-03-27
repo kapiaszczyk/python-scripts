@@ -1,52 +1,28 @@
 from faker import Faker
-from faker.providers import address, company, currency, date_time, file, job, lorem
-from sql_metadata import Parser
+from faker.providers import company
 import sys
 
-
-# Example query to insert a new company into the database
-# INSERT INTO company (name, description, website, email)
-# VALUES (
-#         'Apple',
-#         'Apple Inc. is an American multinational technology company that specializes in consumer electronics, computer software, and online services.',
-#         'https://www.apple.com',
-#         'recruitment@apple.com'
-#     );
+fake = Faker()
 
 def generate_company_names(amount):
-    fake = Faker()
     fake.add_provider(company)
-    company_names = []
-    for _ in range(amount):
-        company_names.append(fake.company())
+    company_names = [fake.company() for _ in range(amount)]
     return company_names
 
 def generate_company_descriptions(amount):
-    fake = Faker()
-    company_descriptions = []
-    for _ in range(amount):
-        company_descriptions.append(fake.paragraph(nb_sentences=1))
+    company_descriptions = [fake.paragraph(nb_sentences=1) for _ in range(amount)]
     return company_descriptions
 
 def generate_company_websites(amount):
-    fake = Faker()
-    company_websites = []
-    for _ in range(amount):
-        company_websites.append(fake.url())
+    company_websites = [(f"https://{fake.word()}.{fake.random_element(elements=('com', 'net', 'org'))}") for _ in range(amount)]
     return company_websites
 
 def generate_company_emails(amount):
-    fake = Faker()
-    company_emails = []
-    for _ in range(amount):
-        company_emails.append(fake.email())
+    company_emails = [(f"{fake.word()}@{fake.word()}.com") for _ in range(amount)]
     return company_emails
 
 def assemble_queries(company_names, company_descriptions, company_websites, company_emails):
-    queries = []
-    for i in range(len(company_names)):
-        query = f"INSERT INTO company (name, description, website, email) VALUES ('{company_names[i]}', '{company_descriptions[i]}', '{company_websites[i]}', '{company_emails[i]}');"
-        queries.append(query)
+    queries = [f"INSERT INTO company (name, description, website, email) VALUES ('{company_names[i]}', '{company_descriptions[i]}', '{company_websites[i]}', '{company_emails[i]}');" for i in range(len(company_names))]
     return queries
 
 def write_queries_to_file(queries):
@@ -60,6 +36,7 @@ def main():
         return
 
     amount = int(sys.argv[1])
+
     names = generate_company_names(amount)
     descriptions = generate_company_descriptions(amount)
     websites = generate_company_websites(amount)

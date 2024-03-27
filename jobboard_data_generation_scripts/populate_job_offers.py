@@ -1,155 +1,89 @@
 from faker import Faker
-from faker.providers import address, company, currency, date_time, file, job, lorem
-from sql_metadata import Parser
 import sys
 
-
-# CREATE TYPE salary_type_enum AS ENUM ('hourly', 'monthly', 'annual', 'other');
-
-# INSERT INTO job_offer (name, short_description, description, contract_type, salary, salary_currency, salary_type, seniority_level, is_remote, is_hybrid, company_id)
-# VALUES (
-#         'Software Engineer',
-#         'Develop software',
-#         'Develop software for the company',
-#         'Full-time',
-#         100000,
-#         'USD',
-#         'annual',
-#         'Junior',
-#         false,
-#         false,
-#         1
-#     );
-
-contract_type = ["full-time", "b2b", "part-time", "internship", "contract", "other"]
+contract_type = ["full-time", "b2b", "part-time",
+                 "internship", "contract", "other"]
 
 salary_type = ["hourly", "monthly", "annual", "other"]
 
 seniority_level = ["intern", "junior", "regular", "mid", "senior", "architect"]
 
-job_names_examples = ["Software Engineer", "Data Scientist", "Product Manager", "QA Engineer", "DevOps Engineer", "Frontend Developer", "Backend Developer", 
-             "Fullstack Developer", "Mobile Developer", "UX/UI Designer", "Scrum Master", "Project Manager", "Business Analyst", "Sales Manager", "HR Specialist", "Recruiter", 
-             "Office Manager", "Customer Support Specialist", "Marketing Specialist", "Content Creator", "Graphic Designer", "System Administrator", "Network Administrator",
-             "Cloud Engineer", "Security Specialist", "Database Administrator", "Data Analyst", "Data Engineer", "Machine Learning Engineer", "AI Specialist", "Blockchain Developer",
-                "Game Developer", "Embedded Developer"]
+job_names_examples = ["Software Engineer", "Data Scientist", "Product Manager", "QA Engineer", "DevOps Engineer", "Frontend Developer", "Backend Developer",
+                      "Fullstack Developer", "Mobile Developer", "UX/UI Designer", "Scrum Master", "Project Manager", "Business Analyst", "Sales Manager",
+                      "HR Specialist", "Recruiter", "Office Manager", "Customer Support Specialist", "Marketing Specialist", "Content Creator",
+                      "Graphic Designer", "System Administrator", "Network Administrator", "Cloud Engineer", "Security Specialist", "Database Administrator",
+                      "Data Analyst", "Data Engineer", "Machine Learning Engineer", "AI Specialist", "Blockchain Developer", "Game Developer", "Embedded Developer"]
 
-def generate_job_names(amount):
-    fake = Faker()
-    fake.add_provider(job)
-    job_names = []
-    for _ in range(amount):
-        job_names.append(fake.random_element(job_names_examples))
-    return job_names
+fake = Faker()
 
 
-def generate_short_descriptions(amount):
-    short_descriptions = []
-    fake = Faker()
-    for _ in range(amount):
-        short_descriptions.append(fake.word())
+def get_job_name():
+    return fake.random_element(job_names_examples)
 
 
-
-    return short_descriptions
-
-def generate_description(amount):
-    descriptions = []
-    fake = Faker()
-    for _ in range(amount):
-        descriptions.append(fake.paragraph(nb_sentences=1))
+def get_short_desc():
+    return fake.word()
 
 
-    return descriptions
-
-def generate_contract_type(amount):
-    contract_types = []
-    fake = Faker()
-    for _ in range(amount):
-        contract_types.append(fake.random_element(contract_type))
+def generate_description():
+    return fake.text()
 
 
-    return contract_types
+def generate_contract_type():
+    return fake.random_element(contract_type)
 
 
-def generate_salary(amount):
-    salaries = []
-    fake = Faker()
-    for _ in range(amount):
-        salaries.append(fake.random_int(min=100, max=300_000))
+def generate_salary():
+    return fake.random_int(min=100, max=300_000)
 
 
-    return salaries
-
-def generate_currency(amount):
-    currencies = []
-    fake = Faker()
-    for _ in range(amount):
-        currencies.append(fake.currency_code())
-    
-
-    return currencies
-
-def generate_salary_type(amount):
-    salary_types = []
-    fake = Faker()
-    for _ in range(amount):
-        salary_types.append(fake.random_element(salary_type))
+def generate_currency():
+    return fake.currency_code()
 
 
-    return salary_types
-
-def generate_seniority_level(amount):
-    seniority_levels = []
-    fake = Faker()
-    for _ in range(amount):
-        seniority_levels.append(fake.random_element(seniority_level))
+def generate_salary_type():
+    return fake.random_element(salary_type)
 
 
-    return seniority_levels
-
-def generate_random_boolean():
-    faker = Faker()
-
-    value = faker.boolean(chance_of_getting_true=50)
+def get_seniority_level(amount):
+    return fake.random_element(seniority_level)
 
 
-    return value
-
-def generate_random_company_ids(amount, company_range):
-    company_ids = []
-    fake = Faker()
-    for _ in range(amount):
-        company_ids.append(fake.random_int(min=1, max=company_range))
+def get_boolean():
+    return fake.boolean(chance_of_getting_true=50)
 
 
-    return company_ids
+def get_company_id(number_of_companies):
+    return fake.random_int(min=1, max=number_of_companies)
 
-def assemble_queries(job_names, short_descriptions, descriptions, contract_types, salaries, currencies, salary_types, seniority_levels, company_ids):
+
+def assemble_queries(amount, number_of_companies):
     queries = []
-    for i in range(len(job_names)):
-        query = f"INSERT INTO job_offer (name, short_description, description, contract_type, salary, salary_currency, salary_type, seniority_level, is_remote, is_hybrid, company_id) VALUES ('{job_names[i]}', '{short_descriptions[i]}', '{descriptions[i]}', '{contract_types[i]}', {salaries[i]}, '{currencies[i]}', '{salary_types[i]}', '{seniority_levels[i]}', {generate_random_boolean()}, {generate_random_boolean()}, {company_ids[i]});"
+    for i in range(amount):
+        query = f"INSERT INTO job_offer (name, short_description, description, contract_type, salary, salary_currency, salary_type, seniority_level, is_remote, is_hybrid, company_id) VALUES ('{get_job_name()}', '{get_short_desc()}', '{
+            generate_description()}', '{generate_contract_type()}', {generate_salary()}, '{generate_currency()}', '{generate_salary_type()}', '{get_seniority_level()}', {get_boolean()}, {get_boolean()}, {get_company_id(number_of_companies)});"
         queries.append(query)
     return queries
+
 
 def write_to_file(queries):
     with open("populate_job_offers.sql", "w") as file:
         for query in queries:
             file.write(query + "\n")
 
+
 def main():
-    amount = int(sys.argv[1])
+    amount_of_job_offers = int(sys.argv[1])
     number_of_companies = int(sys.argv[2])
-    job_names = generate_job_names(amount)
-    short_descriptions = generate_short_descriptions(amount)
-    descriptions = generate_description(amount)
-    contract_types = generate_contract_type(amount)
-    salaries = generate_salary(amount)
-    currencies = generate_currency(amount)
-    salary_types = generate_salary_type(amount)
-    seniority_levels = generate_seniority_level(amount)
-    company_ids = generate_random_company_ids(amount, number_of_companies)
-    queries = assemble_queries(job_names, short_descriptions, descriptions, contract_types, salaries, currencies, salary_types, seniority_levels, company_ids)
+
+    if len(sys.argv) < 3:
+        print("Usage: python populate_job_offers.py <amount_of_job_offers> <number_of_companies>")
+        print("The amount of job offers should be greater than the number of companies.")
+        exit(1)
+
+    queries = assemble_queries(amount_of_job_offers, number_of_companies)
     write_to_file(queries)
+
 
 if __name__ == "__main__":
     main()

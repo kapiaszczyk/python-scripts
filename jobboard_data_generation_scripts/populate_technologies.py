@@ -228,7 +228,6 @@ language_names = [
 
 fake = Faker()
 
-
 def get_tech_name():
     return fake.random_element(language_names)
 

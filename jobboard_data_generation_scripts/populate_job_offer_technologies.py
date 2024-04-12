@@ -38,6 +38,10 @@ def write_to_file(queries):
 
 
 def main():
+    if len(sys.argv) != 3:
+        print("Usage: python populate_job_offer_technologies.py <range_of_job_offers> <range_of_technologies>")
+        sys.exit(1)
+
     range_of_job_offers = int(sys.argv[1])
     range_of_technologies = int(sys.argv[2])
 

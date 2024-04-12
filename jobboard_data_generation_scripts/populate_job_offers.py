@@ -16,6 +16,9 @@ import sys
 # --     salary_type salary_type_enum NOT NULL,
 # --     experience VARCHAR(255) NOT NULL,
 # --     operating_mode operating_mode_enum NOT NULL,
+# --     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+# --     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+# --     expires_at TIMESTAMP NOT NULL,
 # --     company_id INT,
 # --     address_id INT,
 # --     FOREIGN KEY (company_id) REFERENCES company(id),
@@ -77,8 +80,8 @@ def get_operating_mode():
     return fake.random_element(operating_modes)
 
 
-def get_boolean():
-    return fake.boolean(chance_of_getting_true=50)
+def get_expires_at():
+    return fake.date_time_between(start_date="+1d", end_date="+50d")
 
 
 def get_company_id(number_of_companies):
@@ -90,8 +93,7 @@ def assemble_queries(amount, number_of_companies):
     for i in range(amount):
         # Since the addresses are generated sequentially, assign the same address_id as company_id
         company_address_id = get_company_id(number_of_companies)
-        query = f"INSERT INTO job_offer (name, short_description, description, contract_type, salary, salary_currency, salary_type, experience, operating_mode, company_id, address_id) VALUES ('{get_job_name()}', '{get_short_desc()}', '{
-            generate_description()}', '{generate_contract_type()}', {generate_salary()}, '{generate_currency()}', '{generate_salary_type()}', '{get_experience(amount)}', '{get_operating_mode()}', {company_address_id}, {company_address_id});"
+        query = f"INSERT INTO job_offer (name, short_description, description, contract_type, salary, salary_currency, salary_type, experience, operating_mode, expires_at, company_id, address_id) VALUES ('{get_job_name()}', '{get_short_desc()}', '{generate_description()}', '{generate_contract_type()}', {generate_salary()}, '{generate_currency()}', '{generate_salary_type()}', '{get_experience(i)}', '{get_operating_mode()}', '{get_expires_at()}', {company_address_id}, {company_address_id});"
         queries.append(query)
     return queries
 

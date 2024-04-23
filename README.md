@@ -1,7 +1,7 @@
 <!-- ABOUT  -->
 ## About 
 
-This is a collection of python scripts that I have written for various purposes.
+This is a collection of python scripts that I have written for various purposes. For shell scripts, [check out this repository](https://github.com/kapiaszczyk/scripts).
 
 <!-- GETTING STARTED -->
 ## Getting Started

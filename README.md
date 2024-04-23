@@ -40,7 +40,7 @@ Where `<input_file>` is the path to the markdown file containing the notes and `
 
 The script converts the markdown to HTML elements, so the notes can contain HTML tags (e.g. `<br>` for line breaks or `<code>`). It does not support anything more fancy, like images.
 
-### [extract_openapi_paths.py]([https://github.com/kapiaszczyk/python-scripts/blob/main/openapi_url_extractor.py](https://github.com/kapiaszczyk/python-scripts/blob/main/extract_openapi_paths.py))
+### [extract_openapi_paths.py](https://github.com/kapiaszczyk/python-scripts/blob/main/extract_openapi_paths.py)
 
 This script extracts API paths from openAPI v3 documentation. It works with both YAML and JSON files and can output the paths to a simple markdown table.
 

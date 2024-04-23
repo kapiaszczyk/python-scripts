@@ -233,8 +233,7 @@ def get_tech_name():
 
 
 def get_desc():
-    return fake.text()
-
+    return fake.sentence(nb_words=25)
 
 def assemble_queries(amount):
     queries = []

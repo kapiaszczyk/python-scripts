@@ -10,7 +10,7 @@ def generate_company_names(amount):
     return company_names
 
 def generate_company_descriptions(amount):
-    company_descriptions = [fake.paragraph(nb_sentences=1) for _ in range(amount)]
+    company_descriptions = [fake.paragraph(nb_sentences=5) for _ in range(amount)]
     return company_descriptions
 
 def generate_company_websites(amount):

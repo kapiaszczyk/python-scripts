@@ -5,16 +5,18 @@ from random import sample
 
 fake = Faker()
 
+def remove_apostrophes(string):
+    return string.replace("'", "")
 
 def generate_street_names(amount):
     fake.add_provider(address)
-    street_names = [fake.street_name() for _ in range(amount)]
+    street_names = [remove_apostrophes(fake.street_name()) for _ in range(amount)]
     return street_names
 
 
 def generate_cities(amount):
     fake.add_provider(address)
-    cities = [fake.city() for _ in range(amount)]
+    cities = [remove_apostrophes(fake.city()) for _ in range(amount)]
     return cities
 
 
@@ -26,7 +28,7 @@ def generate_postal_codes(amount):
 
 def generate_countries(amount):
     fake.add_provider(address)
-    countries = [fake.country() for _ in range(amount)]
+    countries = [remove_apostrophes(fake.country()) for _ in range(amount)]
     return countries
 
 
@@ -47,8 +49,7 @@ def generate_company_id(amount, number_of_companies):
 def assemble_queries(street_names, cities, postal_codes, countries, company_ids):
     queries = []
     for i in range(len(company_ids)):
-        query = f"INSERT INTO address (street, city, postal_code, country, company_id) VALUES ('{
-            street_names[i]}', '{cities[i]}', '{postal_codes[i]}', '{countries[i]}', {company_ids[i]});"
+        query = f"INSERT INTO address (street, city, postal_code, country, company_id) VALUES ('{street_names[i]}', '{cities[i]}', '{postal_codes[i]}', '{countries[i]}', {company_ids[i]});"
         queries.append(query)
     return queries
 

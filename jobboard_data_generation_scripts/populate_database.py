@@ -4,7 +4,7 @@ import sys
 
 def main():
 
-    if len(sys.argv) < 6:
+    if len(sys.argv) != 6:
         print("Usage: python populate_database.py <amount_of_technologies> <amount_of_companies> <amount_of_addresses> <amount_of_job_offers> <amount_of_technologies_job_offers>")
         return
 
@@ -35,14 +35,11 @@ def main():
     exit_code = exit_code or os.system(
         f"python populate_companies.py {amount_of_companies}")
     print("Populating addresses...")
-    exit_code = exit_code or os.system(f"python populate_addresses.py {
-                                       amount_of_addresses} {amount_of_companies}")
+    exit_code = exit_code or os.system(f"python populate_addresses.py {amount_of_addresses} {amount_of_companies}")
     print("Populating job offers...")
-    exit_code = exit_code or os.system(f"python populate_job_offers.py {
-                                       amount_of_job_offers} {amount_of_companies}")
+    exit_code = exit_code or os.system(f"python populate_job_offers.py {amount_of_job_offers} {amount_of_companies}")
     print("Populating job offer technologies...")
-    exit_code = exit_code or os.system(f"python populate_job_offer_technologies.py {
-                                       amount_of_job_offers} {amount_of_technologies_job_offers}")
+    exit_code = exit_code or os.system(f"python populate_job_offer_technologies.py {amount_of_job_offers} {amount_of_technologies}")
 
     if exit_code != 0:
         print("An error occurred while running the scripts.")

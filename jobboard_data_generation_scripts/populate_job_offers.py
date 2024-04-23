@@ -41,6 +41,8 @@ job_names_examples = ["Software Engineer", "Data Scientist", "Product Manager", 
 
 operating_modes = ["remote", "hybrid", "onsite"]
 
+valid_currencies = ["EUR", "BGN", "CZK", "DKK", "HUF", "PLN", "RON", "SEK", "CHF", "TRY", "USD", "AUD", "CAD", "GBP"]
+
 fake = Faker()
 
 
@@ -49,11 +51,11 @@ def get_job_name():
 
 
 def get_short_desc():
-    return fake.sentence(nb_words=6, variable_nb_words=True, ext_word_list=None)
+    return fake.sentence(nb_words=15)
 
 
 def generate_description():
-    return fake.text()
+    return fake.paragraph(nb_sentences=50)
 
 
 def generate_contract_type():
@@ -65,7 +67,7 @@ def generate_salary():
 
 
 def generate_currency():
-    return fake.currency_code()
+    return fake.random_element(valid_currencies)
 
 
 def generate_salary_type():
@@ -81,7 +83,7 @@ def get_operating_mode():
 
 
 def get_expires_at():
-    return fake.date_time_between(start_date="+1d", end_date="+50d")
+    return fake.date_time_between(start_date="+7d", end_date="+50d")
 
 
 def get_company_id(number_of_companies):

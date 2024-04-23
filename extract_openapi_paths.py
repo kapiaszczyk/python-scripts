@@ -4,7 +4,7 @@ import yaml
 
 FILE_NAME_MD = "endpoints.md"
 FILE_NAME_TXT = "endpoints.txt"
-USAGE = "Usage: python extract_endpoints.py -p <path_to_openapi_documentation> -t <True/False> -y <True/False>"
+USAGE = "Usage: python extract_openapi_paths.py -p <path_to_openapi_documentation> -t <True/False> -y <True/False>"
 
 
 def read_documentation(path):

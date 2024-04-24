@@ -103,7 +103,7 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    if args is None:
+    if args is None or not args.path:
         parser.error("No arguments or path provided")
     else:
         data_from_file = open_file(args.path)

@@ -49,6 +49,15 @@ Usage:
 python extract_openapi_paths.py -p <path_to_openapi_documentation> -t <True/False> -y <True/False>
 ```
 
+### [properties_env_var_extractor.py](https://github.com/kapiaszczyk/python-scripts/blob/main/properties_env_var_extractor.py)
+
+This script extracts environment variables for `application.properties` file of Spring application and generates a markdown table with variable name, default value and corresponding property. It does not support multiple variables in one property (eg. `spring.datasource.url=${URL:jdbc:postgresql://localhost:5432}/${NAME:name}`) and leaves the description column empty.
+
+Usage:
+```
+python properties_env_var_extractor.py [-h] [--path PATH]
+```
+
 ### [jobboard_data_generation_scripts](https://github.com/kapiaszczyk/python-scripts/tree/main/jobboard_data_generation_scripts)
 
 Scripts that generate test data for one of my personal projects with help of Faker library.

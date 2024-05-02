@@ -8,6 +8,7 @@ from pathlib import Path
 
 
 def read_markdown_file(file_path):
+    """Reads the markdown file."""
     try:
         with open(file_path, "r", encoding="utf-8") as file:
             content = file.read()
@@ -17,6 +18,7 @@ def read_markdown_file(file_path):
 
 
 def convert_markdown_to_html(markdown_text):
+    """Converts Markdown syntax to HTML tags."""
     try:
         html_content = markdown.markdown(
             markdown_text, extensions=['fenced_code'])
@@ -28,6 +30,8 @@ def convert_markdown_to_html(markdown_text):
 
 
 def save_file(file_path, content, output_file_path=None):
+    """Writes the parsed content to a file."""
+
     # If path to the output directory is passed, save the file there
     # Otherwise save to the directory of the input file
 
@@ -47,6 +51,7 @@ def save_file(file_path, content, output_file_path=None):
 
 
 def parse_markdown_file(file_path, output_file_path=None):
+    """Parses markdown file by extracting question and answer pairs."""
 
     logger.info("Parsing markdown file: " + file_path)
 

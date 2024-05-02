@@ -1,3 +1,10 @@
+"""Parse Markdown to Anki CSV deck.
+
+This script parses Markdown notes containing question and answer pairs
+and converts them into a CSV file that can be imported into Anki as a deck.
+
+"""
+
 import sys
 import csv
 import markdown

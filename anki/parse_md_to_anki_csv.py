@@ -18,8 +18,9 @@ def read_markdown_file(file_path):
     """Reads the markdown file."""
     try:
         with open(file_path, "r", encoding="utf-8") as file:
-            content = file.read()
-            return content
+            return file.read()
+    except FileNotFoundError:
+        logger.error(f"File not found: {file_path}")
     except Exception as e:
         logger.error(f"An error occurred while reading the file: {e}")
 
@@ -27,22 +28,24 @@ def read_markdown_file(file_path):
 def convert_markdown_to_html(markdown_text):
     """Converts Markdown syntax to HTML tags."""
     try:
-        html_content = markdown.markdown(
-            markdown_text, extensions=['fenced_code'])
-        return html_content
+        return markdown.markdown(markdown_text, extensions=['fenced_code'])
     except Exception as e:
-        logger.error(
-            f"An error occurred while converting Markdown to HTML: {e}")
+        logger.error(f"Error converting Markdown to HTML: {e}")
         return None
+
+
+def resolve_output_path(file_path, output_file_path):
+    """Resolves the output file path."""
+    if output_file_path is None:
+        return file_path.replace(".md", "_deck.csv")
+    else:
+        return Path(output_file_path) / (Path(file_path).stem + "_deck.csv")
 
 
 def save_file(file_path, content, output_file_path=None):
     """Writes the parsed content to a file."""
 
-    if output_file_path is None:
-        output_file_path = file_path.replace(".md", "_deck.csv")
-    else:
-        output_file_path = Path(output_file_path) / (Path(file_path).stem + "_deck.csv")
+    output_file_path = resolve_output_path(file_path, output_file_path)
 
     try:
         with open(output_file_path, "w", newline="", encoding="utf-8") as csv_file:
@@ -83,43 +86,31 @@ def parse_markdown_file(file_path, output_file_path=None):
             html_answer = convert_markdown_to_html("\n".join(answer).strip())
             deck.append([question.strip(), html_answer])
 
-        save_file(file_path, deck, output_file_path)
-
     except Exception as e:
         logger.error(f"An error occurred while parsing the file: {e}")
         return None
 
+    save_file(file_path, deck, output_file_path)
+
+
+def setup_logging(log_level=logging.INFO):
+    """Setup logging configuration."""
+    logging.basicConfig(level=log_level, format="%(levelname)s - %(message)s")
+    return logging.getLogger(__name__)
+
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(
-        description="Python script for turning markdown notes into flashcards in CSV format"
-    )
-    parser.add_argument(
-        "--input", "-i", help="path to the markdown file", action="store"
-    )
-    parser.add_argument(
-        "--output", "-o", nargs="?", help="path to the output directory", action="store"
-    )
-    parser.add_argument(
-        "--log", "-l", help="enable console logging", action='store_true'
-    )
-    parser.add_argument(
-        "--log_level", "-lv", help="logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL)", default="INFO"
-    )
+    parser = argparse.ArgumentParser(description="Convert Markdown notes to Anki CSV deck")
+    parser.add_argument("--input", "-i", help="path to the markdown file", required=True)
+    parser.add_argument("--output", "-o", help="path to the output CSV file (default: input_deck.csv)")
+    parser.add_argument("--log", "-l", help="enable console logging", action='store_true')
+    parser.add_argument("--log_level", "-lv", help="logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL)",
+                        default="INFO")
     args = parser.parse_args()
 
-    logging.basicConfig(level=logging.INFO,
-                        format="%(levelname)s - %(message)s")
-    logger = logging.getLogger(__name__)
+    logger = setup_logging(log_level=getattr(logging, args.log_level.upper()))
 
-    if args.input is None:
-        parser.print_usage()
-    if args.log and args.log in ["True", "true", "1"]:
+    if args.log:
         logger.addHandler(logging.StreamHandler(sys.stdout))
-    if args.log_level and args.log_level in ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"] and args.log:
-        logger.setLevel(args.log_level)
-    if args.input and not args.output:
-        parse_markdown_file(args.input)
-    elif args.input and args.output:
-        logger.info(f"Will save to {args.output}")
-        parse_markdown_file(args.input, args.output)
+
+    parse_markdown_file(args.input, args.output)

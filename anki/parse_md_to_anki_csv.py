@@ -39,9 +39,6 @@ def convert_markdown_to_html(markdown_text):
 def save_file(file_path, content, output_file_path=None):
     """Writes the parsed content to a file."""
 
-    # If path to the output directory is passed, save the file there
-    # Otherwise save to the directory of the input file
-
     if output_file_path is None:
         output_file_path = file_path.replace(".md", "_deck.csv")
     else:

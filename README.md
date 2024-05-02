@@ -13,32 +13,8 @@ To run these scripts, you will need to have python installed on your machine. Yo
 
 ### [parse_md_to_anki_csv.py](https://github.com/kapiaszczyk/python-scripts/blob/main/parse_md_to_anki_csv.py)
 
-This script parses markdown notes to a CSV file that can be imported into Anki. The script is designed to work with notes that are formatted in a specific way. The notes should be formatted as follows:
-
-```markdown
-### Question
-Answer
-
-### Question
-Another answer
-```
-
-The script will parse the notes and create a CSV file with the following format:
-
-```csv
-Question,Answer
-Question,Another answer.
-```
-
-To use the script, run the following command:
-
-```bash
-python parse_notes_to_anki_csv.py -i <input_file> -o [output_file]
-```
-
-Where `<input_file>` is the path to the markdown file containing the notes and `<output_file>` is the path to the directory where the CSV file will be saved. If no output file is specified, the CSV file will be saved in the same directory as the input file. 
-
-The script converts the markdown to HTML elements, so the notes can contain HTML tags (e.g. `<br>` for line breaks or `<code>`). It does not support anything more fancy, like images.
+This script parses markdown notes to a CSV file that can be imported into Anki. The script is designed to work with notes that are formatted in a specific way.
+You can find more details in the [DOCS.md](https://github.com/kapiaszczyk/python-scripts/blob/main/anki/DOCS.md) file.
 
 ### [extract_openapi_paths.py](https://github.com/kapiaszczyk/python-scripts/blob/main/extract_openapi_paths.py)
 

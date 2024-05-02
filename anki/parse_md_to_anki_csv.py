@@ -27,41 +27,31 @@ def convert_markdown_to_html(markdown_text):
         return None
 
 
-def save_file(file_path, content, output_file_path=None, remove_p_tags=None):
+def save_file(file_path, content, output_file_path=None):
     # If path to the output directory is passed, save the file there
     # Otherwise save to the directory of the input file
 
-    print(remove_p_tags)
-
-    if remove_p_tags:
-        print("Removing p tags")
-        content = re.sub(r'<\/?p>', '', content)
+    if output_file_path is None:
+        output_file_path = file_path.replace(".md", "_deck.csv")
+    else:
+        output_file_path = Path(output_file_path) / (Path(file_path).stem + "_deck.csv")
 
     try:
-        if output_file_path is None:
-            output_file_path = file_path.replace(".md", "_deck.csv")
-        else:
-            output_file_path = Path(output_file_path) / \
-                (Path(file_path).stem + "_deck.csv")
         with open(output_file_path, "w", newline="", encoding="utf-8") as csv_file:
             csv_writer = csv.writer(csv_file)
             csv_writer.writerows(content)
             logger.info(f"File saved at {output_file_path}")
-
     except Exception as e:
         logger.error(f"An error occurred while saving the file: {e}")
         return None
 
 
-def parse_markdown_file(file_path, output_file_path=None, remove_p_tags=None):
+def parse_markdown_file(file_path, output_file_path=None):
 
-    print("Parse markdown file: " + remove_p_tags.__str__())
+    logger.info("Parsing markdown file: " + file_path)
 
     try:
-        try:
-            markdown_file = read_markdown_file(file_path)
-        except Exception as e:
-            return None
+        markdown_file = read_markdown_file(file_path)
 
         deck = []
         question = None
@@ -74,7 +64,7 @@ def parse_markdown_file(file_path, output_file_path=None, remove_p_tags=None):
                 if question is not None:
                     html_answer = convert_markdown_to_html(
                         "\n".join(answer).strip())
-                    deck.append([question.strip(), html_answer])
+                    deck.append([re.sub(r'</?p>', '', question.strip()), re.sub(r'</?p>', '', html_answer)])
                     answer = []
                 question = convert_markdown_to_html(line[3:].strip())
             else:
@@ -84,7 +74,7 @@ def parse_markdown_file(file_path, output_file_path=None, remove_p_tags=None):
             html_answer = convert_markdown_to_html("\n".join(answer).strip())
             deck.append([question.strip(), html_answer])
 
-        save_file(file_path, deck, output_file_path, remove_p_tags)
+        save_file(file_path, deck, output_file_path)
 
     except Exception as e:
         logger.error(f"An error occurred while parsing the file: {e}")
@@ -105,26 +95,22 @@ if __name__ == "__main__":
         "--log", "-l", help="enable console logging", action='store_true'
     )
     parser.add_argument(
-        "--log_level", "-lv", help="logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL)", default="CRITICAL"
-    )
-    parser.add_argument(
-        "--remove_p_tags", "-r", help="remove <p> tags from the output", action="store_false"
+        "--log_level", "-lv", help="logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL)", default="INFO"
     )
     args = parser.parse_args()
 
-    logging.basicConfig(level=logging.CRITICAL,
-                        format=("%(levelname)s - %(message)s"))
+    logging.basicConfig(level=logging.INFO,
+                        format="%(levelname)s - %(message)s")
     logger = logging.getLogger(__name__)
 
+    if args.input is None:
+        parser.print_usage()
     if args.log and args.log in ["True", "true", "1"]:
         logger.addHandler(logging.StreamHandler(sys.stdout))
     if args.log_level and args.log_level in ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"] and args.log:
         logger.setLevel(args.log_level)
-    if args.input and not args.output and not args.remove_p_tags:
+    if args.input and not args.output:
         parse_markdown_file(args.input)
-    elif args.input and args.output and args.remove_p_tags is True:
-        print("No remove p tags")
-        parse_markdown_file(args.input, args.output, True)
-    elif args.input and args.output and args.remove_p_tags in [False, "False", "false", "0"] or args.remove_p_tags is None:
-        print("Remove p tags")
-        parse_markdown_file(args.input, args.output, False)
+    elif args.input and args.output:
+        logger.info(f"Will save to {args.output}")
+        parse_markdown_file(args.input, args.output)

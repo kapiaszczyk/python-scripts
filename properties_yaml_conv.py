@@ -1,0 +1,122 @@
+import argparse
+import logging
+
+import yaml
+
+
+def convert(input_path):
+    """Converts and saves the converted file."""
+
+    extension = resolve_format(input_path)
+
+    if extension == "YAML":
+        content = convert_to_properties(input_path)
+        output_path = input_path.lower().replace(".yaml", ".properties")
+        save(content, output_path)
+    elif extension == "PROPERTIES":
+        content = convert_to_yaml(input_path)
+        output_path = input_path.lower().replace(".properties", ".yaml")
+        save(content, output_path)
+    else:
+        raise ValueError
+
+
+def resolve_format(file):
+    """Resolves if file is a YAML or properties file"""
+
+    if file is None:
+        raise ValueError(f"There is no such file: {file}")
+    else:
+        if file.lower().endswith('.yaml'):
+            return "YAML"
+        elif file.lower().endswith('.properties'):
+            return "PROPERTIES"
+        else:
+            raise ValueError("File is neither a properties or YAML format")
+
+
+def convert_to_properties(file):
+    """Converts a YAML file to properties file"""
+
+    raise NotImplementedError
+
+
+def convert_to_yaml(file):
+    """Converts a properties file to a YAML file.
+
+        The function creates a nested dictionaries based on key parts.
+        For each line, points the current level to the root of the dictionary
+        and loops over the key parts, skipping the last part.
+        Checks if given part exists at the current level.
+        If it does not, creates a new dictionary at that part.
+        If it does, moves the current level to that part.
+        Finally, assigns the value to the last part of the key.
+
+        Empty or commented out lines are skipped 
+        and the output is parsed to YAML format.
+    
+    """
+
+    content = read(file)
+
+    result = {}
+
+    for line in content.splitlines():
+        line = line.strip()
+
+        if not line or line.startswith('#'):
+            continue
+
+        key, value = line.split('=')
+        key_parts = key.strip().split('.')
+
+        current_dictionary_level = result
+
+        for part in key_parts[:-1]:
+            if part not in current_dictionary_level:
+                current_dictionary_level[part] = {}
+            current_dictionary_level = current_dictionary_level[part]
+        current_dictionary_level[key_parts[-1]] = value.strip()
+
+    return yaml.dump(result, default_flow_style=False)
+
+
+def read(path):
+    """Reads the file content and returns it"""
+
+    try:
+        with open(path, 'r', encoding="UTF-8") as file:
+            return file.read()
+    except FileNotFoundError:
+        logger.error(f"File not found: {path}")
+    except Exception as e:
+        logger.error(f"An error occurred while reading file: {e}")
+        exit(1)
+
+
+def save(content, path):
+    """Saves the contents to a file."""
+
+    try:
+        with open(path, 'w', encoding="UTF-8") as file:
+            file.write(content)
+    except Exception as e:
+        logger.error(f"An error occurred while saving file: {e}")
+
+
+def setup_logging():
+    """Setups logging."""
+    logging.basicConfig(level="INFO", format="%(levelname)s - %(message)s")
+    return logging.getLogger(__name__)
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Convert properties to YAML and vice versa")
+
+    parser.add_argument("--input", "-i", help="Path to the input file", required=True)
+
+    logger = setup_logging()
+
+    args = parser.parse_args()
+
+    convert(args.input)

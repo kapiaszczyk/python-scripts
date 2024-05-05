@@ -1,6 +1,6 @@
 import argparse
 import logging
-
+import flatdict
 import yaml
 
 
@@ -36,9 +36,29 @@ def resolve_format(file):
 
 
 def convert_to_properties(file):
-    """Converts a YAML file to properties file"""
+    """Converts a YAML file to properties file
 
-    raise NotImplementedError
+        The function flattens the YAML content into a dictionary,
+        then iterates over it, creating a list.
+        The list is then joined into a single string.
+        Colons in the keys are replaced with dots.
+
+    """
+
+    content = yaml.load(read(file), Loader=yaml.FullLoader)
+
+    flattened = flatdict.FlatDict(content)
+
+    result = []
+
+    for key, value in flattened.items():
+        result.append(f"{key}={value}")
+
+    result = "\n".join(result)
+
+    result = result.replace(":", ".")
+
+    return result
 
 
 def convert_to_yaml(file):

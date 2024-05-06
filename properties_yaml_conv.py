@@ -17,8 +17,6 @@ def convert(input_path):
         content = convert_to_yaml(input_path)
         output_path = input_path.lower().replace(".properties", ".yaml")
         save(content, output_path)
-    else:
-        raise ValueError
 
 
 def resolve_format(file):

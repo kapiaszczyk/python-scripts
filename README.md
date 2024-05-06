@@ -29,6 +29,10 @@ This script extracts environment variables for `application.properties` file of 
 
 Scripts that generate test data for one of my personal projects with help of Faker library.
 
+### [properties_yaml_conv.py](https://github.com/kapiaszczyk/python-scripts/blob/main/properties_yaml_conv.py)
+
+Convert between `.properties` and `.yaml` formats.
+
 ### [create_table_sql_statement.py](https://github.com/kapiaszczyk/python-scripts/blob/main/sql/create_table_sql_statement.py)
 
 Simple script that generates a SQL create table statement. Perfect when for creating table fast. Doesn't support constraints etc.

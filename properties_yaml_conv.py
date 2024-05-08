@@ -7,32 +7,16 @@ import yaml
 def convert(input_path):
     """Converts and saves the converted file."""
 
-    extension = resolve_format(input_path)
-
-    if extension == "YAML":
+    if input_path.lower().endswith('.yaml'):
         content = convert_to_properties(input_path)
         output_path = input_path.lower().replace(".yaml", ".properties")
         save(content, output_path)
-    elif extension == "PROPERTIES":
+    elif input_path.lower().endswith('.properties'):
         content = convert_to_yaml(input_path)
         output_path = input_path.lower().replace(".properties", ".yaml")
         save(content, output_path)
     else:
-        raise ValueError
-
-
-def resolve_format(file):
-    """Resolves if file is a YAML or properties file"""
-
-    if file is None:
-        raise ValueError(f"There is no such file: {file}")
-    else:
-        if file.lower().endswith('.yaml'):
-            return "YAML"
-        elif file.lower().endswith('.properties'):
-            return "PROPERTIES"
-        else:
-            raise ValueError("File is neither a properties or YAML format")
+        raise ValueError("File is neither a properties or YAML format")
 
 
 def convert_to_properties(file):

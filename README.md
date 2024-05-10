@@ -18,12 +18,11 @@ You can find more details in the [DOCS.md](https://github.com/kapiaszczyk/python
 
 ### [extract_openapi_paths.py](https://github.com/kapiaszczyk/python-scripts/blob/main/documentation_tools/extract_openapi_paths.py)
 
-This script extracts API paths from openAPI v3 documentation. It works with both YAML and JSON files and can output the paths to a simple markdown table.
+This script extracts API paths from openAPI v3 documentation. It works with both YAML and JSON files and can output the paths to a simple Markdown table.
 
 ### [properties_env_var_extractor.py](https://github.com/kapiaszczyk/python-scripts/blob/main/documentation_tools/properties_env_var_extractor.py)
 
-This script extracts environment variables for `application.properties` file of Spring application and generates a markdown table with variable name, default value and corresponding property. It does not support multiple variables in one property (eg. `abc.def.url=${URL:jdbc:abc://lh:5432}/${NAME:name}`) and leaves the description column empty.
-
+This script extracts environment variables for `application.properties` file of Spring application and generates a Markdown table with variable name, default value and corresponding property. It does not support multiple variables in one property (e.g. `abc.def.url=${URL:jdbc:abc://lh:5432}/${NAME:name}`) and leaves the description column empty.
 
 ### [jobboard_data_generation_scripts](https://github.com/kapiaszczyk/python-scripts/tree/main/personal_projects_related/jobboard_data_generation_scripts)
 
@@ -35,7 +34,7 @@ Convert between `.properties` and `.yaml` formats.
 
 ### [google_this.py](https://github.com/kapiaszczyk/python-scripts/blob/main/google_this.py)
 
-Script that queries Google with entries from a file, opening each result in a new tab.
+Script that queries Google with entries from a file, opening each result in a new tab. Do not use this script to abuse the search engine!
 
 ### [create_table_sql_statement.py](https://github.com/kapiaszczyk/python-scripts/blob/main/sql/create_table_sql_statement.py)
 

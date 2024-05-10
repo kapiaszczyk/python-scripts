@@ -33,6 +33,10 @@ Scripts that generate test data for one of my personal projects with help of Fak
 
 Convert between `.properties` and `.yaml` formats.
 
+### [google_this.py](https://github.com/kapiaszczyk/python-scripts/blob/main/google_this.py)
+
+Script that queries Google with entries from a file, opening each result in a new tab.
+
 ### [create_table_sql_statement.py](https://github.com/kapiaszczyk/python-scripts/blob/main/sql/create_table_sql_statement.py)
 
 Simple script that generates a SQL create table statement. Perfect when for creating table fast. Doesn't support constraints etc.

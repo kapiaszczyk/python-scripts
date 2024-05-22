@@ -90,7 +90,7 @@ def extract_endpoint_description_yaml(documentation_yaml):
 
 
 def write_to_markdown_table(endpoint_dict):
-    """Writes the extracted endpoints to a markdown table
+    """Writes the extracted endpoints to a Markdown table
 
     Args:
         endpoint_dict (dict): Dictionary containing endpoint paths and associated data
@@ -115,7 +115,8 @@ def write_to_file(endpoint_list):
         endpoint_list (list): List of extracted endpoints
     """
     with open(FILE_NAME_TXT, "w", encoding="UTF-8") as file:
-        file.write(endpoint_list)
+        for line in endpoint_list:
+            file.write(line + "\n")
 
 
 def success_message():

@@ -36,6 +36,10 @@ Convert between `.properties` and `.yaml` formats.
 
 Script that queries Google with entries from a file, opening each result in a new tab. Do not use this script to abuse the search engine!
 
+### [generate_image_with_text.py](https://github.com/kapiaszczyk/python-scripts/blob/main/libs/generate_image_with_text.py)
+
+Script that generates image in binary format containing the word passed into it.
+
 ### [create_table_sql_statement.py](https://github.com/kapiaszczyk/python-scripts/blob/main/sql/create_table_sql_statement.py)
 
 Simple script that generates a SQL create table statement. Perfect when for creating table fast. Doesn't support constraints etc.

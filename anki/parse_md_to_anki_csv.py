@@ -55,6 +55,13 @@ def save_file(file_path, content, output_file_path=None):
     except Exception as e:
         logger.error(f"An error occurred while saving the file: {e}")
         return None
+    
+
+def drop_empty_lines(text):
+    """Remove empyt lines from the file."""
+
+    lines = [line for line in text.splitlines() if line.strip() != ""]
+    return "\n".join(lines)
 
 
 def parse_markdown_file(file_path, output_file_path=None):
@@ -63,7 +70,7 @@ def parse_markdown_file(file_path, output_file_path=None):
     logger.info("Parsing markdown file: " + file_path)
 
     try:
-        markdown_file = read_markdown_file(file_path)
+        markdown_file = drop_empty_lines(read_markdown_file(file_path))
 
         deck = []
         question = None

@@ -64,9 +64,13 @@ def drop_empty_lines(text):
     return "\n".join(lines)
 
 
+def remove_paragraph_tags(text):
+    """Remove paragraph tags from the text."""
+    return re.sub(r'</?p>', '', text)
+
+
 def parse_markdown_file(file_path, output_file_path=None):
     """Parses markdown file by extracting question and answer pairs."""
-
     logger.info("Parsing markdown file: " + file_path)
 
     try:
@@ -81,9 +85,8 @@ def parse_markdown_file(file_path, output_file_path=None):
                 continue
             if line.startswith("###"):
                 if question is not None:
-                    html_answer = convert_markdown_to_html(
-                        "\n".join(answer).strip())
-                    deck.append([re.sub(r'</?p>', '', question.strip()), re.sub(r'</?p>', '', html_answer)])
+                    html_answer = convert_markdown_to_html("\n".join(answer).strip())
+                    deck.append([remove_paragraph_tags(question.strip()), remove_paragraph_tags(html_answer)])
                     answer = []
                 question = convert_markdown_to_html(line[3:].strip())
             else:
@@ -91,7 +94,7 @@ def parse_markdown_file(file_path, output_file_path=None):
 
         if question is not None:
             html_answer = convert_markdown_to_html("\n".join(answer).strip())
-            deck.append([question.strip(), html_answer])
+            deck.append([remove_paragraph_tags(question.strip()), remove_paragraph_tags(html_answer)])
 
     except Exception as e:
         logger.error(f"An error occurred while parsing the file: {e}")

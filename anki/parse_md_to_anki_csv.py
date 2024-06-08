@@ -77,24 +77,30 @@ def parse_markdown_file(file_path, output_file_path=None):
         markdown_file = drop_empty_lines(read_markdown_file(file_path))
 
         deck = []
-        question = None
-        answer = []
+        current_qa = {"question": None, "answer": []}
 
         for line in markdown_file.splitlines():
             if line.startswith("# "):
                 continue
             if line.startswith("###"):
-                if question is not None:
-                    html_answer = convert_markdown_to_html("\n".join(answer).strip())
-                    deck.append([remove_paragraph_tags(question.strip()), remove_paragraph_tags(html_answer)])
-                    answer = []
-                question = convert_markdown_to_html(line[3:].strip())
+                if current_qa["question"] is not None and current_qa["answer"]:
+                    html_answer = convert_markdown_to_html("\n".join(current_qa["answer"]).strip())
+                    deck.append([
+                        remove_paragraph_tags(current_qa["question"].strip()),
+                        remove_paragraph_tags(html_answer)
+                    ])
+                    current_qa = {"question": None, "answer": []}
+                current_qa["question"] = convert_markdown_to_html(line[3:].strip())
             else:
-                answer.append(line)
+                if line != "":
+                    current_qa["answer"].append(line)
 
-        if question is not None:
-            html_answer = convert_markdown_to_html("\n".join(answer).strip())
-            deck.append([remove_paragraph_tags(question.strip()), remove_paragraph_tags(html_answer)])
+        if current_qa["question"] is not None and current_qa["answer"]:
+            html_answer = convert_markdown_to_html("\n".join(current_qa["answer"]).strip())
+            deck.append([
+                remove_paragraph_tags(current_qa["question"].strip()),
+                remove_paragraph_tags(html_answer)
+            ])
 
     except Exception as e:
         logger.error(f"An error occurred while parsing the file: {e}")
